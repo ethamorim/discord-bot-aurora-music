@@ -1,0 +1,12 @@
+{
+  "name": "start-album-cycle",
+  "description": "Starts the routine of the weekly album sending!",
+  "options": [
+    {
+      "name": "order",
+      "description": "Person who should start the cycle",
+      "type": 3,
+      "required": false
+    }
+  ]
+}
