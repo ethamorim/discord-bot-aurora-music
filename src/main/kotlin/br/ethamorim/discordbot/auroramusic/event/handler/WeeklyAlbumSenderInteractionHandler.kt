@@ -18,6 +18,6 @@ class WeeklyAlbumSenderInteractionHandler(
         order++
         if (order == members.size)
             order = 0
-        return mediator.createMessage(String.format(messages.get(0), members[order]))
+        return mediator.createMessage(String.format(messages[0], members[order]))
     }
 }
