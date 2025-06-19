@@ -1,4 +1,4 @@
-package br.ethamorim.discordbot.auroramusic.config
+package br.ethamorim.discordbot.auroramusic
 
 import br.ethamorim.discordbot.auroramusic.event.command.CommandRequestDTO
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -11,7 +11,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.stereotype.Component
 
 @Component
-class CommandConfig(
+class CommandRegistrar(
     @Value("\${discordbot.guild-id}") val guildId: Long,
     val gatewayClient: GatewayDiscordClient,
     val objectMapper: ObjectMapper
@@ -29,7 +29,8 @@ class CommandConfig(
                 .description(commandRequest.description)
 
             commandRequest.options.forEach {
-                applicationCommandRequestBuilder.addOption(ApplicationCommandOptionData.builder()
+                applicationCommandRequestBuilder.addOption(
+                    ApplicationCommandOptionData.builder()
                     .name(it.name)
                     .description(it.description)
                     .type(it.type)
