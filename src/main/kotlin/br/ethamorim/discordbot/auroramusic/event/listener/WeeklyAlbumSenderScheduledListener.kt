@@ -4,7 +4,6 @@ import br.ethamorim.discordbot.auroramusic.event.handler.WeeklyAlbumSenderIntera
 import br.ethamorim.discordbot.auroramusic.property.ChannelProperties
 import discord4j.core.GatewayDiscordClient
 import discord4j.core.`object`.entity.channel.TextChannel
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
@@ -19,7 +18,7 @@ class WeeklyAlbumSenderScheduledListener(
     override fun listen() {
         client.getChannelById(channelProperties.channelTextBot)
             .ofType(TextChannel::class.java)
-            .flatMap({ it -> handler.handle(it) })
+            .flatMap { it -> handler.handle(it) }
             .subscribe()
     }
 }

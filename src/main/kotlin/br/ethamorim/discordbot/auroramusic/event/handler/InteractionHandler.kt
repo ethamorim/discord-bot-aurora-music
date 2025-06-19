@@ -1,7 +1,7 @@
 package br.ethamorim.discordbot.auroramusic.event.handler
 
-import org.reactivestreams.Publisher
+import reactor.core.publisher.Mono
 
-interface InteractionHandler<T> {
-    fun handle(mediator: T): Publisher<Any>
+interface InteractionHandler<M, O> {
+    fun handle(mediator: M): Mono<O>
 }
