@@ -1,7 +1,6 @@
 package br.ethamorim.discordbot.auroramusic.event.handler
 
 import br.ethamorim.discordbot.auroramusic.redis.entity.GuildMember
-import br.ethamorim.discordbot.auroramusic.redis.entity.WeeklyAlbumCycle
 import br.ethamorim.discordbot.auroramusic.redis.repository.GuildMemberRepository
 import br.ethamorim.discordbot.auroramusic.redis.repository.WeeklyAlbumCycleRepository
 import discord4j.core.`object`.entity.Message
@@ -16,28 +15,31 @@ class WeeklyAlbumSenderInteractionHandler(
     private val guildMemberRepository: GuildMemberRepository
 ) : TextInteractionHandler {
 
-    private final var messages = listOf("This is a test! Time for %s to send the album!");
+    private final var messages = listOf("Isso é um teste! Desconsidere a ordem\nHora de %s mandar o álbum!");
 
     override fun handle(mediator: TextChannel): Mono<Message> {
         val cycleInfo = weeklyAlbumCycleRepository.findById(0)
         if (cycleInfo.isPresent && cycleInfo.get().isOn) {
             val guildMembers = guildMemberRepository.findAll().sortedBy { it.weeklyAlbumOrder }
 
-            val order = cycleInfo.get()
+            val currentOrderCycle = cycleInfo.get()
 
-            val currentMember = guildMembers.first { it.id == order.currentMemberId }
-            val currentOrder = currentMember.weeklyAlbumOrder
+            val currentMember = guildMembers.first { it.id == currentOrderCycle.currentMemberId }
+            val currentOrderNumber = currentMember.weeklyAlbumOrder
 
             var nextMember: GuildMember
             try {
-                nextMember = guildMembers.first { it.weeklyAlbumOrder == currentOrder + 1 }
+                nextMember = guildMembers.first { it.weeklyAlbumOrder == currentOrderNumber + 1 }
             } catch (_: NoSuchElementException) {
                 nextMember = guildMembers.first()
             }
-            order.currentMemberId = nextMember.id
-            weeklyAlbumCycleRepository.save(order)
+            val nextOrderCycle = currentOrderCycle.copy()
+            nextOrderCycle.currentMemberId = nextMember.id
 
-            return mediator.createMessage(String.format(messages[0], order.currentMemberId))
+            weeklyAlbumCycleRepository.deleteById(0)
+            weeklyAlbumCycleRepository.save(nextOrderCycle)
+
+            return mediator.createMessage(String.format(messages[0], currentMember.nickname))
         }
         return Mono.empty()
     }
