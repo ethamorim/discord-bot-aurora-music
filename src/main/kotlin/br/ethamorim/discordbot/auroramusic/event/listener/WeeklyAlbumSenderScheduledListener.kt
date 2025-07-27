@@ -14,7 +14,8 @@ class WeeklyAlbumSenderScheduledListener(
     private val handler: WeeklyAlbumSenderInteractionHandler
 ) : ScheduledListener {
 
-    @Scheduled(cron = "0 0 9 ? * SUN", zone = "America/Sao_Paulo")
+//    @Scheduled(cron = "0 0 9 ? * SUN", zone = "America/Sao_Paulo")
+    @Scheduled(cron = "*/30 * * * * *", zone = "America/Sao_Paulo")
     override fun listen() {
         client.getChannelById(channelProperties.channelTextBot)
             .ofType(TextChannel::class.java)

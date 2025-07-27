@@ -10,7 +10,6 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories
-import org.springframework.data.redis.serializer.StringRedisSerializer
 import java.time.Duration
 
 @Configuration
@@ -25,16 +24,14 @@ class RedisConfig(
 ) {
     @Bean
     fun redisConnectionFactory(): RedisConnectionFactory {
-        val standaloneConfiguration = RedisStandaloneConfiguration(host, port)
-        return LettuceConnectionFactory(standaloneConfiguration)
+        return LettuceConnectionFactory(RedisStandaloneConfiguration(host, port))
     }
 
     @Bean
-    fun redisTemplate(redisConnectionFactory: RedisConnectionFactory): RedisTemplate<Any, Any> {
-        val template = RedisTemplate<Any, Any>()
+    fun redisTemplate(redisConnectionFactory: RedisConnectionFactory): RedisTemplate<Array<Byte>, Array<Byte>> {
+        val template = RedisTemplate<Array<Byte>, Array<Byte>>()
         template.connectionFactory = redisConnectionFactory
-        template.keySerializer = StringRedisSerializer()
-        template.valueSerializer = StringRedisSerializer()
+
         return template
     }
 
