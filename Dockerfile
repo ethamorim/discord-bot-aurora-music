@@ -1,4 +1,13 @@
-FROM redis:latest
-COPY redis.conf /usr/local/etc/redis/redis.conf
-EXPOSE 6379
-CMD ["redis-server", "/usr/local/etc/redis/redis.conf"]
+FROM gradle:8.7-jdk17 AS build
+WORKDIR /app
+
+RUN gradle build --no-daemon
+
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+
+COPY --from=build /app/build/libs/app.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
