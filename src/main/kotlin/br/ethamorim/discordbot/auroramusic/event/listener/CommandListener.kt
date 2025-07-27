@@ -1,19 +1,21 @@
 package br.ethamorim.discordbot.auroramusic.event.listener
 
-import discord4j.core.GatewayDiscordClient
-import org.springframework.stereotype.Component
 import br.ethamorim.discordbot.auroramusic.event.command.Command.START_ALBUM_CYCLE
-import discord4j.core.event.domain.interaction.ApplicationCommandInteractionEvent
+import br.ethamorim.discordbot.auroramusic.event.command.WeeklyAlbumStartCommandExecutor
+import discord4j.core.GatewayDiscordClient
+import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
+import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 
 @Component
-class CommandListener(gatewayClient: GatewayDiscordClient) {
+class CommandListener(gatewayClient: GatewayDiscordClient, weeklyAlbumStartCommandExecutor: WeeklyAlbumStartCommandExecutor) {
     init {
-        gatewayClient.on(ApplicationCommandInteractionEvent::class.java) { event ->
+        gatewayClient.on(ChatInputInteractionEvent::class.java) { event ->
             if (START_ALBUM_CYCLE.equalsCommandName(event.commandName))
-                event.reply("The party has already started!")
+                event.deferReply()
+                    .then(weeklyAlbumStartCommandExecutor.execute(event))
             else
-                Mono.empty()
+                Mono.empty<Void>()
         }.subscribe()
     }
 }

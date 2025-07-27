@@ -21,8 +21,12 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation("org.springframework.boot:spring-boot-starter-cache")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("com.discord4j:discord4j-core:3.2.8")
+	implementation("org.apache.commons:commons-pool2")
+	implementation("io.lettuce:lettuce-core:6.7.1.RELEASE")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
