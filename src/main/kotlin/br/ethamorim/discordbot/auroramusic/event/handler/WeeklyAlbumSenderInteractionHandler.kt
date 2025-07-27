@@ -12,35 +12,33 @@ import java.util.NoSuchElementException
 
 @Component
 class WeeklyAlbumSenderInteractionHandler(
-    val weeklyAlbumCycleRepository: WeeklyAlbumCycleRepository,
-    val guildMemberRepository: GuildMemberRepository
+    private val weeklyAlbumCycleRepository: WeeklyAlbumCycleRepository,
+    private val guildMemberRepository: GuildMemberRepository
 ) : TextInteractionHandler {
 
-    private final var messages = listOf("This is a test! Time for <@%s> to send the album!");
+    private final var messages = listOf("This is a test! Time for %s to send the album!");
 
     override fun handle(mediator: TextChannel): Mono<Message> {
-        val guildMembers = guildMemberRepository.findAll()
+        val cycleInfo = weeklyAlbumCycleRepository.findById(0)
+        if (cycleInfo.isPresent && cycleInfo.get().isOn) {
+            val guildMembers = guildMemberRepository.findAll().sortedBy { it.weeklyAlbumOrder }
 
-        var cycleInfo: WeeklyAlbumCycle
-        try {
-            cycleInfo = weeklyAlbumCycleRepository.findAll().first()
+            val order = cycleInfo.get()
 
-            val currentMember = guildMembers.first { it.id == cycleInfo.currentMemberId }
+            val currentMember = guildMembers.first { it.id == order.currentMemberId }
             val currentOrder = currentMember.weeklyAlbumOrder
 
             var nextMember: GuildMember
             try {
                 nextMember = guildMembers.first { it.weeklyAlbumOrder == currentOrder + 1 }
             } catch (_: NoSuchElementException) {
-                nextMember = guildMembers.first { it.weeklyAlbumOrder == 0 }
+                nextMember = guildMembers.first()
             }
-            cycleInfo.currentMemberId = nextMember.id
-        } catch (_: NoSuchElementException) {
-            val memberToStart = guildMembers.first { it.weeklyAlbumOrder == 0 }
-            cycleInfo = WeeklyAlbumCycle(1, memberToStart.id)
-        }
-        weeklyAlbumCycleRepository.save(cycleInfo)
+            order.currentMemberId = nextMember.id
+            weeklyAlbumCycleRepository.save(order)
 
-        return mediator.createMessage(String.format(messages[0], cycleInfo.currentMemberId))
+            return mediator.createMessage(String.format(messages[0], order.currentMemberId))
+        }
+        return Mono.empty()
     }
 }
