@@ -18,13 +18,11 @@ class RedisConfig(
     @Value("\${spring.data.redis.cluster.cache-name.otp.ttl}")
     private val cacheTTL: Long,
     @Value("\${spring.data.redis.host}")
-    private val host: String,
-    @Value("\${spring.data.redis.port}")
-    private val port: Int
+    private val host: String
 ) {
     @Bean
     fun redisConnectionFactory(): RedisConnectionFactory {
-        return LettuceConnectionFactory(RedisStandaloneConfiguration(host, port))
+        return LettuceConnectionFactory(RedisStandaloneConfiguration(host))
     }
 
     @Bean
