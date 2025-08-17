@@ -8,14 +8,15 @@ import br.ethamorim.discordbot.auroramusic.redis.repository.WeeklyAlbumCycleRepo
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
 import discord4j.core.spec.InteractionFollowupCreateMono
 import org.springframework.stereotype.Component
+import reactor.core.publisher.Mono
 import java.util.*
 
 @Component
 class WeeklyAlbumStartCommandExecutor(
     private val guildMemberRepository: GuildMemberRepository,
     private val weeklyAlbumCycleRepository: WeeklyAlbumCycleRepository
-) : CommandExecutor<ChatInputInteractionEvent, InteractionFollowupCreateMono> {
-    override fun execute(event: ChatInputInteractionEvent): InteractionFollowupCreateMono {
+) : CommandExecutor<ChatInputInteractionEvent> {
+    override fun execute(event: ChatInputInteractionEvent): Mono<Void> {
         try {
             val orderToStart = event.getOption("order")
                 .flatMap { it.value }
@@ -42,8 +43,10 @@ class WeeklyAlbumStartCommandExecutor(
             weeklyAlbumCycleRepository.save(cycle)
 
             return event.createFollowup("Começarei a contar o ciclo a partir de ${guildMember.nickname}")
+                .then()
         } catch (e: InvalidOptionException) {
             return event.createFollowup(e.message!!)
+                .then()
         }
     }
 
