@@ -7,8 +7,6 @@ import br.ethamorim.discordbot.auroramusic.redis.repository.GuildMemberRepositor
 import br.ethamorim.discordbot.auroramusic.redis.repository.WeeklyAlbumCycleRepository
 import br.ethamorim.discordbot.auroramusic.util.LoggerUtil
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent
-import discord4j.core.spec.InteractionFollowupCreateMono
-import org.slf4j.Logger
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
