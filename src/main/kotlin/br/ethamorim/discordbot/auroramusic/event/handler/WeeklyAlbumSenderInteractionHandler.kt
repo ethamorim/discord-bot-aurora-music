@@ -15,7 +15,7 @@ class WeeklyAlbumSenderInteractionHandler(
     private val guildMemberRepository: GuildMemberRepository
 ) : TextInteractionHandler {
 
-    private final var messages = listOf("Isso é um teste! Desconsidere a ordem\nHora de %s mandar o álbum!");
+    private final var messages = listOf("Hora de <@%s> mandar o álbum!");
 
     override fun handle(mediator: TextChannel): Mono<Message> {
         val cycleInfo = weeklyAlbumCycleRepository.findById(0)
@@ -39,7 +39,7 @@ class WeeklyAlbumSenderInteractionHandler(
             weeklyAlbumCycleRepository.deleteById(0)
             weeklyAlbumCycleRepository.save(nextOrderCycle)
 
-            return mediator.createMessage(String.format(messages[0], currentMember.nickname))
+            return mediator.createMessage(String.format(messages[0], currentMember.id))
         }
         return Mono.empty()
     }
